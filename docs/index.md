@@ -1,14 +1,14 @@
-## Welcome to project documentation stages
+# Welcome to project documentation stages
 
-### Table of Contents
+## Table of Contents
 
 1. [Tokenization]()
 2. [Stop Words Dropping]()
 3. [Lemmatization]()
 
 
-#### Tokenization
+### Tokenization
 
-#### Stop Words Dropping
+### Stop Words Dropping
 
-#### Lemmatization
+### Lemmatization
