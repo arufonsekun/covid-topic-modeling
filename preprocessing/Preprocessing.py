@@ -84,20 +84,27 @@ class Preprocessing(object):
     def _remove_remaining_noise(self, text):
         return re.sub(r'[^\w\s]','', text)
 
+    def _is_float(self, text):
+        return (text.find('.')+1) and text.replace('.', '', 1).isdigit()
     """
     Gets tokens lemmas, transform digits into words, and
     removes remainig punctuation as well.
     """
+    # TODO: refaaactor
     def get_tokens_lemmas(self):
         lemmas = []
         text   = ""
         for token in self.tokens:
             lemma = token.lemma_
+            if self._is_float(lemma):
+                continue
             lemma = self._remove_remaining_noise(lemma)
-            if token.is_digit:
+            if lemma.isdigit():
                 lemma = num2words(lemma).replace(" ", "_")
                 lemma = lemma.replace("-", "_")
-            lemmas.append(lemma)
+                lemma = lemma.replace(",", "_")
+            if lemma != '':
+                lemmas.append(lemma)
         return lemmas
 
     """
