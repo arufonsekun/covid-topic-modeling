@@ -35,16 +35,36 @@ class Preprocessing(object):
         self.tokens = [token for token in spacy_doc]
 
     """
-    Check is the given token is not punctuation,
-    a stop word, a quote and right or left punctuation
+    Poor performance method that uses lots of NOTs
     """
-    def _is_not_useless(self, token):
+    def _is_not_useless_old(self, token):
         not_punct    = not token.is_punct
         not_quote    = not token.is_quote
         not_stop_word= not token.is_stop
         not_rl_punct = not token.is_left_punct and not token.is_right_punct
 
         return not_stop_word and not_punct and not_quote and not_rl_punct
+
+    def clean_tokens_old(self):
+        cleaned_tokens = []
+        for token in self.tokens:
+            if self._is_not_useless_old(token):
+                cleaned_tokens.append(token)
+                self.tokens = cleaned_tokens
+
+    """
+    Check is the given token is not punctuation,
+    a stop word, a quote and right or left punctuation.
+    (improved _is_not_useless_old method)
+    """
+    def _is_not_useless(self, token):
+        sw       = token.is_stop
+        punct    = token.is_punct
+        quote    = token.is_quote
+        space    = token.is_space
+        rl_punct = token.is_left_punct or token.is_right_punct
+
+        return not (sw or punct or quote or rl_punct or space)
 
     """
     Removes stop word, punctuation and quote tokens.
@@ -58,21 +78,26 @@ class Preprocessing(object):
 
     """
     This was needed 'cause I don't wanted to use gensim,
-    basically it remover unicode, and remaining punctuation
+    basically it removes unicode, and remaining punctuation
     in tokens text.
     """
     def _remove_remaining_noise(self, text):
         return re.sub(r'[^\w\s]','', text)
 
+    """
+    Gets tokens lemmas, transform digits into words, and
+    removes remainig punctuation as well.
+    """
     def get_tokens_lemmas(self):
         lemmas = []
         text   = ""
         for token in self.tokens:
-            text = token.text
+            lemma = token.lemma_
+            lemma = self._remove_remaining_noise(lemma)
             if token.is_digit:
-                text = num2words(token.text)
-            text = self._remove_remaining_noise(text)
-            lemmas.append(text)
+                lemma = num2words(lemma).replace(" ", "_")
+                lemma = lemma.replace("-", "_")
+            lemmas.append(lemma)
         return lemmas
 
     """
