@@ -1,25 +1,66 @@
 from ..preprocessing import Preprocessing
+from ..preprocessing import Document
 import unittest
 import logging
 
+DOCUMENT_NAME = "dataset/news/news.csv"
+N_ROWS        = 1
+
 class TestTokenizer(unittest.TestCase):
-    """ Tests tokenizer behaviour """
-
+    """
+    Tests tokenizer behaviour
+    """
     def test_tokens_generation(self):
-
+        preprocess = Preprocessing.Preprocessing()
         log = logging.getLogger( "TestTokenizer.test_tokens_generation" )
 
         input = "Natural Language processing is 21 really cool."
-        output = ['natural', 'language', 'processing', 'is', 'twenty_one', 'really', 'cool', '.']
+        output = ['Natural', 'Language', 'processing', '21', 'cool']
 
-        p = Preprocessing.Preprocessing()
-        p.set_doc(input)
-        p.tokenize()
-        tokens = p.get_tokens_text()
+        preprocess.set_doc(input)
+        preprocess.tokenize()
+        preprocess.clean_tokens()
+        tokens = preprocess.get_tokens_text()
 
         log.debug(tokens)
-        del p
         self.assertEqual(tokens, output)
+
+    """
+    Test clean_tokens() and clean_tokens_old(),
+    if an error raises it's OK, It supposed to,
+    diff output1.txt output2.txt for more details.
+    """
+    def test_tokens_cleaning(self):
+
+        preprocess = Preprocessing.Preprocessing()
+        doc_set = Document.Document(DOCUMENT_NAME, N_ROWS)
+
+        doc = doc_set.get(0)
+
+        log = logging.getLogger("TestTokenizer.test_tokens_cleaning")
+
+        with open("output1.txt", "w") as output1:
+            preprocess.set_doc(doc)
+            preprocess.tokenize()
+            preprocess.clean_tokens()
+            lemmas1 = preprocess.get_tokens_lemmas()
+
+            for lemma in lemmas1:
+                output1.write(lemma+'\n')
+
+        with open("output2.txt", "w") as output2:
+            preprocess.set_doc(doc)
+            preprocess.tokenize()
+            preprocess.clean_tokens_old()
+            lemmas2 = preprocess.get_tokens_lemmas()
+
+            for lemma in lemmas2:
+                output2.write(lemma+'\n')
+
+        del preprocess
+        del doc_set
+
+        self.assertEquals(lemmas1, lemmas2)
 
 if __name__ == "__main__":
     unittest.main()
