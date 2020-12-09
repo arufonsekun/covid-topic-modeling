@@ -1,15 +1,16 @@
-from spacy.tokenizer import Tokenizer
+import re
+import spacy
+from num2words import num2words
 from spacy.lemmatizer import Lemmatizer
-from spacy.lang.en import English
 
 class Preprocessing(object):
-
     """
     Apply spacy preprocessing tools in a given document.
-    @author Junior Vitor Ramisch <junior.ramisch@gmail.com>
+    @author Junior Vitor Ramisch <junior.ramisch@estudante.uffs.edu.br>
     """
+
     def __init__(self):
-        self.nlp = English()
+        self.nlp = spacy.load("en_core_web_md")
         self.doc = ''
 
     """
@@ -34,12 +35,45 @@ class Preprocessing(object):
         self.tokens = [token for token in spacy_doc]
 
     """
+    Check is the given token is not punctuation,
+    a stop word, a quote and right or left punctuation
+    """
+    def _is_not_useless(self, token):
+        not_punct    = not token.is_punct
+        not_quote    = not token.is_quote
+        not_stop_word= not token.is_stop
+        not_rl_punct = not token.is_left_punct and not token.is_right_punct
+
+        return not_stop_word and not_punct and not_quote and not_rl_punct
+
+    """
     Removes stop word, punctuation and quote tokens.
     """
-    def clean_text(self):
+    def clean_tokens(self):
+        cleaned_tokens = []
         for token in self.tokens:
-            if token.is_stop or token.is_punct or token.is_quote:
-                self.tokens.remove(token)
+            if self._is_not_useless(token):
+                cleaned_tokens.append(token)
+        self.tokens = cleaned_tokens
+
+    """
+    This was needed 'cause I don't wanted to use gensim,
+    basically it remover unicode, and remaining punctuation
+    in tokens text.
+    """
+    def _remove_remaining_noise(self, text):
+        return re.sub(r'[^\w\s]','', text)
+
+    def get_tokens_lemmas(self):
+        lemmas = []
+        text   = ""
+        for token in self.tokens:
+            text = token.text
+            if token.is_digit:
+                text = num2words(token.text)
+            text = self._remove_remaining_noise(text)
+            lemmas.append(text)
+        return lemmas
 
     """
     Return a list of tokens text

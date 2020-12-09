@@ -2,7 +2,7 @@ from Preprocessing import Preprocessing
 from Document import Document
 
 DOCUMENT_NAME = "dataset/news/news.csv"
-N_ROWS        = 1
+N_ROWS        = 3
 
 def main():
 
@@ -16,9 +16,12 @@ def main():
 
         preprocess.tokenize()
 
-        tokens = preprocess.get_tokens_text()
+        preprocess.clean_tokens()
 
-        print(tokens)
+        lemmas = preprocess.get_tokens_lemmas()
+
+        print(len(lemmas))
+        print(lemmas)
 
 if __name__ == "__main__":
     main()
