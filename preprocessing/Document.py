@@ -2,7 +2,8 @@ import pandas as pd
 
 class Document(object):
     """
-    Document class represents a pandas DataFrame.
+    Document class represents a pandas DataFrame,
+    also applies some raw string transformations
     """
 
     def __init__(self, document_name, n_rows):
@@ -11,8 +12,7 @@ class Document(object):
                 filepath_or_buffer = document_name,
                 encoding = "utf-8",
                 nrows = n_rows,
-                header = 0
-        )
+                header = 0)
 
     """
     Returns text, title and description as a single
