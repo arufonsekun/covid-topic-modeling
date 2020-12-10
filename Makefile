@@ -10,5 +10,8 @@ test_lemmatizer:
 test_tokenizer:
 	nosetests3 tests/test_preprocessing.py:TestTokenizer
 
+test_reading_issue:
+	nosetests3 tests/test_preprocessing.py:TestLemmatizer.test_problematic_document
+
 preprocess:
 	python3 preprocessing/main.py

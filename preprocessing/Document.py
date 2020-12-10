@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 class Document(object):
     """
@@ -14,6 +15,25 @@ class Document(object):
                 nrows = n_rows,
                 header = 0)
 
+        self.title        = ""
+        self.text         = ""
+        self.description  = ""
+
+        self.html_matcher  = re.compile("<.*?>|{href}")
+        self._han_matcher  = re.compile("[A-z]*[^\u0020-\u024F]")
+
+    """
+    Removes html tags and chinese characters
+    """
+    def _clean_text(self):
+        self.title = re.sub(self.html_matcher,"", self.title)
+        self.text  = re.sub(self.html_matcher,"", self.text)
+        self.description = re.sub(self.html_matcher,"", self.description)
+
+        self.title = re.sub(self._han_matcher,"", self.title)
+        self.text  = re.sub(self._han_matcher,"", self.text)
+        self.description = re.sub(self._han_matcher,"", self.description)
+
     """
     Returns text, title and description as a single
     document transformed to lower case, given an
@@ -21,8 +41,10 @@ class Document(object):
     """
     def get(self, index):
         document     = self.document_set.loc[index]
-        title        = document["title"].lower()
-        text         = document["text"].lower()
-        description  = document["description"].lower()
+        self.title        = document["title"].lower()
+        self.text         = document["text"].lower()
+        self.description  = document["description"].lower()
 
-        return title +" "+ description +" "+ text
+        self._clean_text()
+
+        return self.title +" "+ self.description +" "+ self.text
