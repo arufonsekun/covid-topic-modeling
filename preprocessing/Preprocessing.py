@@ -10,9 +10,11 @@ class Preprocessing(object):
     """
 
     def __init__(self):
-        self.nlp = spacy.load("en_core_web_md")
-        self.doc = ''
-
+        self.nlp           = spacy.load("en_core_web_md")
+        self.doc           = ''
+        self.html_matcher  = re.compile("<.*?>|{href}")
+        self._han_matcher  = re.compile("[A-z]*[^\u0020-\u024F]") 
+        self.url_matcher_   = re.compile("(href=)|(http)") 
     """
     Class destructor
     """
@@ -52,6 +54,20 @@ class Preprocessing(object):
                 cleaned_tokens.append(token)
                 self.tokens = cleaned_tokens
 
+    def _is_html_tag(self, text):
+        html = re.search(self.html_matcher, text)
+        url  = re.search(self.url_matcher_, text)
+        return not isinstance(html, type(None)) or not isinstance(url, type(None)) 
+
+    # TODO: deal with this text:
+    # 友達と会えない。飲み会もできない。<br>ただ、皆さんのこうした行動によって、
+    # 多くの命が確実に救われてい
+    # ます。そして、今この瞬間も、過酷を極める現場で奮闘して下さっている
+    # 医療従事者の皆さんの負担の軽減につながります。お一人お一人のご協力に、心より感謝申し上げます
+    def _is_han(self, text):
+        match = re.search(self._han_matcher, text) 
+        return not isinstance(match, type(None))
+
     """
     Check is the given token is not punctuation,
     a stop word, a quote and right or left punctuation.
@@ -62,9 +78,10 @@ class Preprocessing(object):
         punct    = token.is_punct
         quote    = token.is_quote
         space    = token.is_space
+        is_han   = self._is_han(token.text)
+        is_html  = self._is_html_tag(token.text)
         rl_punct = token.is_left_punct or token.is_right_punct
-
-        return not (sw or punct or quote or rl_punct or space)
+        return not (sw or punct or quote or rl_punct or space or is_html or is_han)
 
     """
     Removes stop word, punctuation and quote tokens.
@@ -102,7 +119,7 @@ class Preprocessing(object):
             if lemma.isdigit():
                 lemma = num2words(lemma).replace(" ", "_")
                 lemma = lemma.replace("-", "_")
-                lemma = lemma.replace(",", "_")
+                lemma = lemma.replace(",", "")
             if lemma != '':
                 lemmas.append(lemma)
         return lemmas
