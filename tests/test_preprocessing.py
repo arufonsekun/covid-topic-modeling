@@ -111,13 +111,13 @@ class TestLemmatizer(unittest.TestCase):
         del doc_set
 
     def log_test_cleaning(self):
-        log = logging.getLogger("TestLemmatizer.test_url_html_cleaning")
+        log = logging.getLogger("TestLemmatizer.log_test_cleaning")
 
-        n_rows = 134
+        n_rows = 1
         doc_set = Document.Document(DOCUMENT_NAME, n_rows)
         preprocess = Preprocessing.Preprocessing()
 
-        doc = doc_set.get(131)
+        doc = doc_set.get(0)
 
         preprocess.set_doc(doc)
         preprocess.tokenize()
