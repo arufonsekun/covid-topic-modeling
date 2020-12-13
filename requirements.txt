@@ -1,4 +1,4 @@
 pandas
 spacy
 nose
-num2words
+gensim

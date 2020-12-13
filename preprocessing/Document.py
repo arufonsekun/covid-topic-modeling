@@ -7,9 +7,9 @@ class Document(object):
     also applies some raw string transformations
     """
 
-    def __init__(self, document_name, n_rows):
+    def __init__(self, document_name, n_rows, columns=["text", "title", "description"]):
         self.document_set = pd.read_csv(
-                usecols = ["text", "title", "description"],
+                usecols = columns,
                 filepath_or_buffer = document_name,
                 encoding = "utf-8",
                 nrows = n_rows,
@@ -34,6 +34,9 @@ class Document(object):
         self.text  = re.sub(self._han_matcher,"", self.text)
         self.description = re.sub(self._han_matcher,"", self.description)
 
+    def get_row(self, index):
+        return self.document_set.loc[index]
+
     """
     Returns text, title and description as a single
     document transformed to lower case, given an
@@ -42,9 +45,9 @@ class Document(object):
     def get(self, index):
         document     = self.document_set.loc[index]
         try:
-            self.title        = document["title"].lower()
-            self.text         = document["text"].lower()
-            self.description  = document["description"].lower()
+            self.title       = document["title"].lower()
+            self.text        = document["text"].lower()
+            self.description = document["description"].lower()
         except:
             print("Title : {}".format(self.title))
             print("Text : {}".format(self.text))

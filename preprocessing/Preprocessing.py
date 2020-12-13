@@ -1,7 +1,5 @@
 import re
 import spacy
-from num2words import num2words
-from spacy.lemmatizer import Lemmatizer
 
 class Preprocessing(object):
     """
@@ -10,8 +8,8 @@ class Preprocessing(object):
     """
 
     def __init__(self):
-        self.nlp           = spacy.load("en_core_web_md")
-        self.doc           = ''
+        self.nlp = spacy.load("en_core_web_md")
+
     """
     Class destructor
     """
@@ -23,15 +21,14 @@ class Preprocessing(object):
     handle digits very well.
     """
     def set_doc(self, doc):
-        self.doc = doc
+        self.doc = self.nlp(doc)
 
     """
     Generate tokens based on document previous
     transformation.
     """
     def tokenize(self):
-        spacy_doc = self.nlp(self.doc)
-        self.tokens = [token for token in spacy_doc]
+        self.tokens = [token for token in self.doc]
 
     """
     Poor performance method that uses lots of NOTs
@@ -93,7 +90,7 @@ class Preprocessing(object):
     removes remainig punctuation as well.
     """
     # TODO: refaaactor
-    def get_tokens_lemmas(self):
+    def get_lemmas(self):
         lemmas = []
         text   = ""
         for token in self.tokens:
@@ -107,5 +104,18 @@ class Preprocessing(object):
     """
     Return a list of tokens text
     """
-    def get_tokens_text(self):
+    def get_tokens(self):
         return [token.text for token in self.tokens]
+
+    def generate_bigrams(self):
+        for noun_phrase in list(self.doc.noun_chunks):
+            noun_phrase.merge(noun_phrase.root.tag_, noun_phrase.root.lemma_, noun_phrase.root.ent_type_)
+
+    def get_bigrams(self):
+        tokens = []
+        for token in self.tokens:
+            if len(token.text.split(" ")) == 2:
+                tokens.append(token.text.replace(" ", "_"))
+            else:
+                tokens.append(token.text)
+        return tokens

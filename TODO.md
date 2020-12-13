@@ -5,4 +5,3 @@
  * Create the dictionary and bag of words
  * Create the matrix of words occurences by document 26min.
  * Create documentxtopic matrix (Ith,Jth) = probability
- *
