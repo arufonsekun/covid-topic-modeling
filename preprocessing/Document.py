@@ -41,9 +41,14 @@ class Document(object):
     """
     def get(self, index):
         document     = self.document_set.loc[index]
-        self.title        = document["title"].lower()
-        self.text         = document["text"].lower()
-        self.description  = document["description"].lower()
+        try:
+            self.title        = document["title"].lower()
+            self.text         = document["text"].lower()
+            self.description  = document["description"].lower()
+        except:
+            print("Title : {}".format(self.title))
+            print("Text : {}".format(self.text))
+            print("Description : {}".format(self.description))
 
         self._clean_text()
 
