@@ -54,15 +54,16 @@ class Preprocessing(object):
     (improved _is_not_useless_old method)
     """
     def _is_not_useless(self, token):
-        sw          = token.is_stop
-        punct       = token.is_punct
-        quote       = token.is_quote
-        rl_punct    = token.is_left_punct or token.is_right_punct
-        space       = token.is_space
-        is_digit    = token.is_digit
-        is_currency = token.is_currency
+        sw           = token.is_stop
+        punct        = token.is_punct
+        quote        = token.is_quote
+        rl_punct     = token.is_left_punct or token.is_right_punct
+        space        = token.is_space
+        is_digit     = token.is_digit
+        is_len_ltn_3 = len(token.text) < 3
+        is_currency  = token.is_currency
 
-        return not (sw or punct or quote or rl_punct or space or is_digit or is_currency)
+        return not (sw or punct or quote or rl_punct or space or is_digit or is_currency or is_len_ltn_3)
 
     """
     Removes stop word, punctuation and quote tokens.
@@ -97,7 +98,7 @@ class Preprocessing(object):
             lemma = self._remove_remaining_noise(token.lemma_)
             if self._is_float(lemma) or lemma.isdigit():
                 continue
-            if lemma != '':
+            if lemma != '' and len(lemma) > 2:
                 lemmas.append(lemma)
         return lemmas
 

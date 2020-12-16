@@ -5,9 +5,7 @@ import subprocess
 
 DOCUMENT_NAME     = "dataset/news/news.csv"
 PREPROCESSED_DOCS = "results/preprocessing.csv"
-N_ROWS            = 1
-
-# TODO: Check document 123
+N_ROWS            = 6786
 
 def shutdown():
     subprocess.run("shutdown")
@@ -41,7 +39,7 @@ def generate_lemmas_and_write():
             total_time += end - start
             print("Document {} took {:.2f} seconds".format(i, end - start))
 
-    shutdown()
+    # shutdown()
 
 def generate_bigrams():
     print("Generating bigrams for {} document(s) and writting...".format(N_ROWS))
@@ -73,13 +71,13 @@ def generate_bigrams():
             total_time += end - start
             print("Document {} took {:.2f} seconds".format(i, end - start))
     print("Total time {}".format(total_time))
-    
+
     del preprocess
     preprocessed.close()
 
 def main():
-    # generate_lemmas_and_write()
-    generate_bigrams()
+    generate_lemmas_and_write()
+    # generate_bigrams()
 
 if __name__ == "__main__":
     main()
