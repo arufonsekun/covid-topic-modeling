@@ -51,7 +51,7 @@ class Preprocessing(object):
     """
     Check is the given token is not punctuation,
     a stop word, a quote and right or left punctuation.
-    (improved _is_not_useless_old method)
+    (improved from _is_not_useless_old method)
     """
     def _is_not_useless(self, token):
         sw           = token.is_stop

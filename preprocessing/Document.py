@@ -15,12 +15,12 @@ class Document(object):
                 nrows = n_rows,
                 header = 0)
 
-        self.title        = ""
-        self.text         = ""
-        self.description  = ""
+        self.title = ""
+        self.text = ""
+        self.description = ""
 
-        self.html_matcher  = re.compile("<.*?>|{href}")
-        self._han_matcher  = re.compile("[A-z]*[^\u0020-\u024F]")
+        self.html_matcher = re.compile("<.*?>|{href}")
+        self._han_matcher = re.compile("[A-z]*[^\u0020-\u024F]")
 
     """
     Removes html tags and chinese characters
@@ -43,15 +43,11 @@ class Document(object):
     document set index.
     """
     def get(self, index):
-        document     = self.document_set.loc[index]
-        try:
-            self.title       = document["title"].lower()
-            self.text        = document["text"].lower()
-            self.description = document["description"].lower()
-        except:
-            print("Title : {}".format(self.title))
-            print("Text : {}".format(self.text))
-            print("Description : {}".format(self.description))
+        document = self.document_set.loc[index]
+
+        self.title = document["title"].lower()
+        self.text = document["text"].lower()
+        self.description = document["description"].lower()
 
         self._clean_text()
 
