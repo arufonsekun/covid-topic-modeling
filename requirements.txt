@@ -1,4 +1,3 @@
 pandas
 spacy
 nose
-gensim
